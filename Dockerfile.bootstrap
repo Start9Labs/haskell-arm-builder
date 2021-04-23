@@ -1,0 +1,16 @@
+FROM arm32v7/debian:buster
+
+RUN apt-get update
+RUN apt-get install -y ca-certificates curl wget netbase git ghc zlib1g-dev
+RUN echo $(ghc --version)
+RUN wget -O /usr/local/share/ca-certificates/cacert.crt https://curl.haxx.se/ca/cacert.pem
+RUN update-ca-certificates
+RUN wget https://github.com/commercialhaskell/stack/releases/download/v2.1.3/stack-2.1.3-linux-arm.tar.gz
+RUN tar zxvf stack-2.1.3-linux-arm.tar.gz
+WORKDIR /stack-2.1.3-linux-arm
+RUN cp stack /usr/bin/stack
+WORKDIR /root
+RUN mkdir -p haskell/src
+WORKDIR /root/haskell/src
+
+CMD ["stack", "build", "--stack-yaml=stack-ghc-84.yaml", "--system-ghc", "--allow-different-user", "--copy-bins"]
